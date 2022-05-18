@@ -35,13 +35,48 @@ exports.all = async (req, res, next) => {
   }
 };
 
+exports.author = async (req, res, next) => {
+  const { decoded = {} } = req;
+  const { query = {} } = req;
+  const { limit, skip } = paginationParseParams(query);
+  const { sortBy, direction } = sortParseParams(query, fields);
+  const populate = [...Object.getOwnPropertyNames(references)].join(" ");
+
+  try {
+    const [data = [], total = 0] = await Promise.all([
+      Model.find({ author: decoded.id })
+        .limit(limit)
+        .skip(skip)
+        .sort({
+          [sortBy]: direction,
+        })
+        .populate(populate)
+        .exec(),
+      Model.countDocuments(),
+    ]);
+
+    res.json({
+      data,
+      meta: {
+        limit,
+        skip,
+        total,
+        sortBy,
+        direction,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.create = async (req, res, next) => {
   const { body = {}, decoded = {} } = req;
   const { id } = decoded;
 
   const document = new Model({
     ...body,
-    userId: id,
+    author: id,
   });
 
   try {

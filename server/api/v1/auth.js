@@ -37,7 +37,7 @@ const auth = (req, res, next) => {
 const owner = (req, res, next) => {
   const { doc = {}, decoded = {} } = req;
 
-  if (doc.userId.id === decoded.id) {
+  if (doc.author.id === decoded.id) {
     next();
   } else {
     next({

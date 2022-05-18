@@ -36,9 +36,9 @@ exports.all = async (req, res, next) => {
 
 exports.signin = async (req, res, next) => {
   const { body = {} } = req;
-  const { username = "", password = "" } = body;
+  const { email = "", password = "" } = body;
 
-  const document = await Model.findOne({ username });
+  const document = await Model.findOne({ email });
 
   if (document) {
     const verified = await document.verifyPassword(password);
@@ -56,12 +56,12 @@ exports.signin = async (req, res, next) => {
       });
     } else {
       next({
-        message: "Username or password are incorrect.",
+        message: "email or password are incorrect.",
       });
     }
   } else {
     next({
-      message: "Username or password are incorrect.",
+      message: "email or password are incorrect.",
     });
   }
 };
